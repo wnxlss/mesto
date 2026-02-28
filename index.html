@@ -4,32 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MESTO | Ночной клуб в Карачеве</title>
+    <!-- Эффектные шрифты и иконки -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        :root {
-            --primary: #ff4500;      /* Оранжево-красный */
-            --primary-light: #ff6a00; /* Яркий оранжевый */
-            --primary-dark: #b22222;  /* Тёмно-красный */
-            --accent: #ff0000;        /* Красный */
-            --dark: #0a0a0a;          /* Почти чёрный */
-            --light: #f5f5f5;         /* Светлый для текста */
-            --black: #000000;          /* Чисто чёрный */
-            --gray: #1a1a1a;           /* Антрацит */
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
         }
-        
+
+        :root {
+            --primary: #ff4500;
+            --primary-light: #ff6a00;
+            --primary-dark: #b22222;
+            --accent: #ff0000;
+            --dark: #000000;
+            --light: #ffffff;
+            --gray-dark: #0a0a0a;
+            --gray-medium: #1a1a1a;
+            --neon-glow: 0 0 10px #ff4500, 0 0 20px #ff0000, 0 0 30px #ff4500;
+            --text-gradient: linear-gradient(135deg, #fff, #ff6a00, #ff4500, #ff0000);
+        }
+
         body {
             background-color: var(--dark);
             color: var(--light);
+            font-family: 'Montserrat', sans-serif;
             overflow-x: hidden;
             position: relative;
         }
-        
+
+        /* Анимированный фон с частицами */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Динамический градиентный фон */
         body::before {
             content: '';
             position: fixed;
@@ -37,478 +54,501 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 69, 0, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 70%, rgba(255, 0, 0, 0.15) 0%, transparent 50%),
-                        repeating-linear-gradient(45deg, rgba(0,0,0,0.5) 0px, rgba(0,0,0,0.5) 2px, transparent 2px, transparent 4px);
-            z-index: -1;
-            animation: pulse 15s infinite alternate;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 69, 0, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255, 0, 0, 0.2) 0%, transparent 40%),
+                repeating-linear-gradient(45deg, rgba(255,69,0,0.03) 0px, rgba(255,69,0,0.03) 2px, transparent 2px, transparent 8px);
+            z-index: 0;
+            animation: backgroundPulse 8s ease-in-out infinite;
         }
-        
-        @keyframes pulse {
-            0% { opacity: 0.7; }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.8; }
             50% { opacity: 1; }
-            100% { opacity: 0.7; }
         }
-        
+
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        header {
-            padding: 20px 0;
+            padding: 0 30px;
             position: relative;
-            z-index: 10;
-            background: linear-gradient(180deg, var(--black) 0%, rgba(0,0,0,0.8) 100%);
-            border-bottom: 2px solid var(--primary);
+            z-index: 2;
         }
-        
+
+        /* Шапка с эффектом стекла */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.6);
+            border-bottom: 2px solid rgba(255, 69, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        header.scrolled {
+            padding: 10px 0;
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom-color: var(--primary);
+        }
+
         .nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .logo {
-            font-size: 36px;
+            font-size: 42px;
             font-weight: 900;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
+            font-family: 'Bebas Neue', cursive;
+            background: var(--text-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-decoration: none;
-            position: relative;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            text-shadow: 0 0 15px rgba(255,69,0,0.5);
+            position: relative;
+            transition: all 0.3s;
+            animation: logoGlow 3s infinite;
         }
-        
-        .logo::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary-dark));
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.3s ease;
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(255,69,0,0.5)); }
+            50% { filter: drop-shadow(0 0 30px rgba(255,0,0,0.8)); }
         }
-        
-        .logo:hover::after {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-        
+
         .nav-links {
             display: flex;
-            gap: 30px;
+            gap: 40px;
         }
-        
+
         .nav-link {
             color: var(--light);
             text-decoration: none;
             font-weight: 600;
-            position: relative;
-            transition: color 0.3s;
+            font-size: 16px;
             text-transform: uppercase;
-            font-size: 14px;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            position: relative;
+            padding: 5px 0;
+            transition: 0.3s;
         }
-        
-        .nav-link::after {
+
+        .nav-link::before {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: 0;
             left: 0;
             width: 100%;
             height: 2px;
-            background: var(--primary);
+            background: linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
             transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.3s ease;
+            transform-origin: center;
+            transition: transform 0.4s ease;
         }
-        
+
         .nav-link:hover {
             color: var(--primary-light);
+            text-shadow: var(--neon-glow);
         }
-        
-        .nav-link:hover::after {
+
+        .nav-link:hover::before {
             transform: scaleX(1);
-            transform-origin: left;
         }
-        
+
+        /* Hero секция с 3D эффектом */
         .hero {
-            min-height: 85vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
+            justify-content: center;
             position: relative;
-            background: linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%),
-                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 0 L100 100 M100 0 L0 100" stroke="%23ff4500" stroke-width="0.3" opacity="0.2"/></svg>');
-            background-size: cover, auto;
-            border-bottom: 3px solid var(--primary);
+            overflow: hidden;
+            padding: 100px 0;
         }
-        
+
         .hero-content {
-            max-width: 700px;
-            margin: 0 auto;
+            max-width: 900px;
             text-align: center;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
-        
+
         .hero-title {
-            font-size: 72px;
+            font-size: 120px;
             font-weight: 900;
+            font-family: 'Bebas Neue', cursive;
+            line-height: 0.9;
             margin-bottom: 20px;
-            line-height: 1.1;
-            background: linear-gradient(45deg, #ff4500, #ff0000, #8b0000);
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fff, #ff4500, #ff0000, #8b0000);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 0 0 30px rgba(255,69,0,0.5);
-            animation: flicker 3s infinite;
+            letter-spacing: 8px;
+            animation: titleFloat 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(255,69,0,0.5));
+            transform: translateZ(50px);
         }
-        
-        @keyframes flicker {
-            0% { text-shadow: 0 0 30px rgba(255,69,0,0.5); }
-            50% { text-shadow: 0 0 50px rgba(255,0,0,0.8), 0 0 20px #ff4500; }
-            100% { text-shadow: 0 0 30px rgba(255,69,0,0.5); }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0) translateZ(50px); }
+            50% { transform: translateY(-20px) translateZ(70px); }
         }
-        
+
         .hero-subtitle {
-            font-size: 20px;
-            line-height: 1.6;
-            margin-bottom: 40px;
-            opacity: 0.9;
-            color: #cccccc;
-            font-weight: 500;
-            letter-spacing: 1px;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 0 20px rgba(255,69,0,0.5);
+            letter-spacing: 3px;
+            font-weight: 300;
+            transform: translateZ(30px);
         }
-        
+
         .hero-highlight {
-            color: var(--primary);
-            font-weight: 700;
-            background: rgba(255,69,0,0.2);
-            padding: 5px 10px;
-            border-left: 3px solid var(--primary);
+            display: inline-block;
+            padding: 10px 30px;
+            background: linear-gradient(90deg, rgba(255,69,0,0.2), rgba(255,0,0,0.2));
+            border: 2px solid var(--primary);
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            backdrop-filter: blur(5px);
+            transform: skew(-10deg) translateZ(40px);
+            animation: borderPulse 2s infinite;
         }
-        
+
+        @keyframes borderPulse {
+            0%, 100% { border-color: var(--primary); box-shadow: 0 0 30px var(--primary); }
+            50% { border-color: var(--accent); box-shadow: 0 0 60px var(--accent); }
+        }
+
         .btn {
             display: inline-block;
-            padding: 15px 40px;
+            padding: 18px 50px;
             background: linear-gradient(45deg, var(--primary-dark), var(--primary), var(--primary-light));
             color: white;
             text-decoration: none;
-            border-radius: 0px;
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: 0.4s;
             border: none;
             cursor: pointer;
             z-index: 1;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 14px;
-            border: 1px solid var(--primary-light);
-            box-shadow: 0 0 20px rgba(255,69,0,0.3);
+            transform: translateZ(60px);
+            box-shadow: 0 0 40px rgba(255,69,0,0.5);
+            border: 1px solid rgba(255,255,255,0.3);
         }
-        
+
         .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+            z-index: -1;
+        }
+
+        .btn:hover {
+            transform: translateZ(80px) scale(1.1);
+            box-shadow: 0 0 60px var(--primary);
+            border-color: var(--light);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* Features секция с неоновыми карточками */
+        .features {
+            padding: 100px 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            position: relative;
+            border-top: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .features::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, #ff0000, #ff4500);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s;
+            background: repeating-linear-gradient(45deg, rgba(255,69,0,0.05) 0px, rgba(255,69,0,0.05) 2px, transparent 2px, transparent 10px);
+            pointer-events: none;
         }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(255,0,0,0.5);
-            border-color: var(--accent);
-        }
-        
-        .btn:hover::before {
-            opacity: 1;
-        }
-        
-        .features {
-            padding: 80px 0;
-            position: relative;
-            background: var(--black);
-            border-top: 1px solid var(--primary-dark);
-            border-bottom: 1px solid var(--primary-dark);
-        }
-        
+
         .section-title {
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 60px;
+            font-size: 64px;
+            font-weight: 900;
+            font-family: 'Bebas Neue', cursive;
             text-align: center;
+            margin-bottom: 80px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fff, #ff4500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 4px;
             position: relative;
             display: inline-block;
             left: 50%;
             transform: translateX(-50%);
-            color: var(--light);
-            text-transform: uppercase;
-            letter-spacing: 3px;
         }
-        
+
         .section-title::after {
             content: '';
             position: absolute;
-            bottom: -15px;
-            left: 10%;
-            width: 80%;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
             height: 4px;
             background: linear-gradient(90deg, transparent, var(--primary), var(--accent), var(--primary), transparent);
-            border-radius: 2px;
+            animation: lineMove 3s infinite;
         }
-        
+
+        @keyframes lineMove {
+            0% { transform: scaleX(0.8); opacity: 0.5; }
+            50% { transform: scaleX(1); opacity: 1; }
+            100% { transform: scaleX(0.8); opacity: 0.5; }
+        }
+
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 30px;
         }
-        
+
         .feature-card {
-            background: var(--gray);
-            border-radius: 0px;
-            padding: 35px 25px;
-            transition: transform 0.3s, box-shadow 0.3s;
+            background: rgba(20,20,20,0.7);
+            backdrop-filter: blur(10px);
+            padding: 40px 25px;
+            text-align: center;
+            border: 1px solid rgba(255,69,0,0.3);
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--primary-dark);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
-            text-align: center;
+            transition: 0.5s;
+            cursor: pointer;
         }
-        
+
         .feature-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1;
-            background: linear-gradient(135deg, rgba(255,69,0,0.2) 0%, transparent 50%);
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,69,0,0.2), transparent);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: 0.5s;
         }
-        
+
         .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 30px rgba(255,69,0,0.3);
+            transform: translateY(-20px) scale(1.02);
             border-color: var(--primary);
+            box-shadow: 0 30px 40px rgba(255,69,0,0.3);
         }
-        
+
         .feature-card:hover::before {
             opacity: 1;
         }
-        
+
         .feature-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
+            font-size: 60px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            position: relative;
+            z-index: 2;
+            animation: iconFloat 3s infinite;
         }
-        
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
         .feature-title {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 28px;
+            font-weight: 800;
             margin-bottom: 15px;
             color: var(--primary-light);
             text-transform: uppercase;
-        }
-        
-        .feature-text {
-            opacity: 0.9;
-            line-height: 1.6;
-            color: #ddd;
-        }
-        
-        footer {
-            padding: 60px 0 30px;
-            background: var(--black);
+            letter-spacing: 2px;
             position: relative;
-            border-top: 3px solid var(--primary);
+            z-index: 2;
         }
-        
+
+        .feature-text {
+            color: #ccc;
+            line-height: 1.7;
+            font-size: 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Футер с эффектом */
+        footer {
+            padding: 80px 0 30px;
+            background: var(--gray-dark);
+            position: relative;
+            border-top: 2px solid var(--primary);
+        }
+
         .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 40px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 50px;
         }
-        
-        .footer-about {
-            max-width: 300px;
-        }
-        
+
         .footer-logo {
-            font-size: 36px;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
+            font-size: 48px;
+            font-family: 'Bebas Neue', cursive;
+            background: var(--text-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 15px;
-            display: inline-block;
-            text-transform: uppercase;
-        }
-        
-        .footer-text {
-            opacity: 0.7;
-            line-height: 1.6;
-            color: #aaa;
-            font-size: 14px;
-        }
-        
-        .footer-section {
-            min-width: 160px;
-        }
-        
-        .footer-title {
-            font-size: 18px;
-            font-weight: 700;
             margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .footer-text {
+            color: #999;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        .footer-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 25px;
             color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
-        
+
         .footer-links {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
         }
-        
+
         .footer-link {
             color: #ccc;
             text-decoration: none;
-            transition: color 0.3s, padding-left 0.3s;
-            font-size: 14px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        
+
+        .footer-link i {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
         .footer-link:hover {
             color: var(--primary-light);
-            padding-left: 5px;
+            transform: translateX(10px);
         }
-        
+
         .social-links {
             display: flex;
             gap: 15px;
+            margin-top: 20px;
         }
-        
+
         .social-link {
-            width: 44px;
-            height: 44px;
-            border-radius: 0;
-            background: var(--gray);
+            width: 50px;
+            height: 50px;
+            background: rgba(255,69,0,0.1);
+            border: 1px solid var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
-            border: 1px solid var(--primary-dark);
+            text-decoration: none;
             color: var(--primary);
-            font-size: 20px;
+            font-size: 22px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,69,0,0.5), transparent);
+            transition: 0.5s;
+        }
+
         .social-link:hover {
             background: var(--primary);
-            color: var(--black);
-            transform: translateY(-3px);
-            border-color: var(--primary-light);
-            box-shadow: 0 5px 15px rgba(255,69,0,0.4);
+            color: var(--dark);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255,69,0,0.3);
         }
-        
+
+        .social-link:hover::before {
+            left: 100%;
+        }
+
         .copyright {
             text-align: center;
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid var(--primary-dark);
-            opacity: 0.6;
-            color: #777;
-            font-size: 13px;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,69,0,0.2);
+            color: #666;
+            font-size: 14px;
         }
-        
-        /* Анимации */
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
+
         /* Адаптивность */
         @media (max-width: 992px) {
-            .hero-title {
-                font-size: 60px;
-            }
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .hero-title { font-size: 90px; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-content { grid-template-columns: 1fr 1fr; }
         }
-        
+
         @media (max-width: 768px) {
-            .hero {
-                min-height: 70vh;
-                padding: 60px 0;
-                text-align: center;
-            }
-            
-            .hero-content {
-                max-width: 100%;
-            }
-            
-            .hero-title {
-                font-size: 48px;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
+            .nav-links { display: none; }
+            .hero-title { font-size: 60px; }
+            .hero-highlight { font-size: 20px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; }
         }
-        
+
         @media (max-width: 576px) {
-            .hero-title {
-                font-size: 36px;
-                letter-spacing: 2px;
-            }
-            
-            .section-title {
-                font-size: 32px;
-            }
-            
-            .btn {
-                padding: 12px 30px;
-            }
-            
-            .footer-content {
-                flex-direction: column;
-                gap: 30px;
-            }
+            .hero-title { font-size: 48px; letter-spacing: 2px; }
+            .section-title { font-size: 42px; }
+            .btn { padding: 15px 30px; font-size: 16px; }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header>
+    <canvas id="particles-canvas"></canvas>
+
+    <header id="header">
         <div class="container">
             <nav class="nav">
                 <a href="#" class="logo">MESTO</a>
@@ -520,51 +560,41 @@
             </nav>
         </div>
     </header>
-    
+
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title">MESTO 32</h1>
-                <p class="hero-subtitle">
-                    <span class="hero-highlight">КАРАЧЕВ SOON...</span><br>
-                    ЕДИНСТВЕННЫЙ НОЧНОЙ КЛУБ В ГОРОДЕ<br>
-                    <strong>ПЯТНИЦА-СУББОТА С 22:00 ДО 05:00</strong>
-                </p>
-                <p style="color: #ff6347; margin-bottom: 30px; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">🔥 ЗАЖИГАЕМ ПО-ЧЁРНОМУ 🔥</p>
-                <a href="https://t.me/mestoprohod_bot" class="btn">КУПИТЬ ПРОХОДКУ</a>
+                <div class="hero-highlight">КАРАЧЕВ • 32 • SOON</div>
+                <h1 class="hero-title">MESTO</h1>
+                <p class="hero-subtitle">Единственный ночной клуб в городе<br><strong>ПТ & СБ 22:00 - 05:00</strong></p>
+                <a href="https://t.me/mestoprohod_bot" class="btn">Купить проходку</a>
             </div>
         </div>
     </section>
-    
+
     <section class="features" id="features">
         <div class="container">
-            <h2 class="section-title">ЧТО У НАС ЕСТЬ</h2>
+            <h2 class="section-title">Что у нас есть</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-music"></i>
-                    </div>
-                    <h3 class="feature-title">ХИТЫ И НОВИНКИ</h3>
-                    <p class="feature-text">Только лучшая музыка: Современные песни и всем известные исполнители. Каждую субботу — тематические сеты от карачевских диджеев.</p>
+                    <div class="feature-icon"><i class="fas fa-music"></i></div>
+                    <h3 class="feature-title">Хиты и новинки</h3>
+                    <p class="feature-text">Только лучшая музыка. Современные треки и золотые хиты. Каждую субботу — сеты от карачевских диджеев.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-cocktail"></i>
-                    </div>
-                    <h3 class="feature-title">БАРНАЯ КАРТА</h3>
-                    <p class="feature-text">Авторские коктейли "Огонь Карачева" (текила, перец, лайм), "Чёрный принц" и разливное пиво от местных пивоваров.</p>
+                    <div class="feature-icon"><i class="fas fa-cocktail"></i></div>
+                    <h3 class="feature-title">Барная карта</h3>
+                    <p class="feature-text">Авторские коктейли "Огонь Карачева", "Чёрный принц" и разливное пиво от местных пивоваров.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-ticket-alt"></i>
-                    </div>
-                    <h3 class="feature-title">АКЦИИ</h3>
-                    <p class="feature-text">Спортикам (если покажите) — вход -50% до 23:00. Именинникам — скидка 20% на бар.</p>
+                    <div class="feature-icon"><i class="fas fa-ticket-alt"></i></div>
+                    <h3 class="feature-title">Акции</h3>
+                    <p class="feature-text">Спортикам — вход -50% до 23:00. Именинникам — скидка 20% на бар. Действуй!</p>
                 </div>
             </div>
         </div>
     </section>
-    
+
     <footer id="contact">
         <div class="container">
             <div class="footer-content">
@@ -573,20 +603,20 @@
                     <p class="footer-text">С 2026 года зажигаем огни в самом сердце Карачева. Только 16+.</p>
                 </div>
                 <div class="footer-section">
-                    <h3 class="footer-title">КОНТАКТЫ</h3>
+                    <h3 class="footer-title">Контакты</h3>
                     <div class="footer-links">
-                        <a href="https://t.me/mesto_kara" class="footer-link" target="_blank">Telegram: @</a>
-                        <a href="#" class="footer-link">+7 (996) 479-76-22</a>
-                        <a href="#" class="footer-link">г. Карачев soon...</a>
-                        <a href="#" class="footer-link">Ежедневно 20:00 - 06:00</a>
+                        <a href="https://t.me/mesto_kara" class="footer-link"><i class="fab fa-telegram"></i> Telegram: @mesto_kara</a>
+                        <a href="#" class="footer-link"><i class="fas fa-phone"></i> +7 (996) 479-76-22</a>
+                        <a href="#" class="footer-link"><i class="fas fa-map-marker-alt"></i> г. Карачев (скоро)</a>
+                        <a href="#" class="footer-link"><i class="fas fa-clock"></i> Ежедневно 20:00 - 06:00</a>
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h3 class="footer-title">МЫ В СЕТИ</h3>
+                    <h3 class="footer-title">Мы в сети</h3>
                     <div class="social-links">
-                        <a href="https://t.me/mestoKreall" class="social-link" target="_blank"><i class="fab fa-telegram-plane"></i></a>
-                        <a href="#" class="social-link" target="_blank"><i class="fab fa-vk"></i></a>
-                        <a href="#" class="social-link" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://t.me/mestoKreall" class="social-link"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-vk"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
             </div>
@@ -597,53 +627,106 @@
     </footer>
 
     <script>
-        // Плавная прокрутка
+        // Эффект particles для фона
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 2 - 1;
+                this.color = `rgba(255, ${Math.floor(Math.random() * 100 + 50)}, 0, ${Math.random() * 0.5})`;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const particles = [];
+        for (let i = 0; i < 100; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Header scroll effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                    target.scrollIntoView({ behavior: 'smooth' });
                 }
             });
         });
 
-        // Анимация появления карточек
-        const animateOnScroll = () => {
-            const elements = document.querySelectorAll('.feature-card');
-            elements.forEach(element => {
-                const elementPosition = element.getBoundingClientRect().top;
-                const screenPosition = window.innerHeight / 1.2;
-                
-                if (elementPosition < screenPosition) {
-                    element.style.opacity = '1';
-                    element.style.transform = 'translateY(0)';
+        // Анимация карточек при скролле
+        const cards = document.querySelectorAll('.feature-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
                 }
             });
-        };
+        }, { threshold: 0.1 });
 
-        // Инициализация стилей для анимации
-        document.querySelectorAll('.feature-card').forEach(card => {
+        cards.forEach(card => {
             card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transform = 'translateY(50px)';
+            card.style.transition = 'opacity 0.6s, transform 0.6s';
+            observer.observe(card);
         });
 
-        window.addEventListener('scroll', animateOnScroll);
-        window.addEventListener('load', animateOnScroll);
-        
-        // Эффект мерцания для заголовка (доп)
+        // Динамический неоновый текст
         const title = document.querySelector('.hero-title');
-        if (title) {
-            setInterval(() => {
-                title.style.textShadow = '0 0 40px #ff4500, 0 0 20px #ff0000';
-                setTimeout(() => {
-                    title.style.textShadow = '0 0 20px #ff4500';
-                }, 200);
-            }, 2000);
-        }
+        setInterval(() => {
+            title.style.filter = 'drop-shadow(0 0 30px #ff4500) drop-shadow(0 0 60px #ff0000)';
+            setTimeout(() => {
+                title.style.filter = 'drop-shadow(0 0 20px #ff4500)';
+            }, 200);
+        }, 2000);
     </script>
 </body>
 </html>

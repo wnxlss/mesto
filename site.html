@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MESTO | Ночной клуб в Карачеве</title>
+    <style>
+        :root {
+            --primary: #ff4500;      /* Оранжево-красный */
+            --primary-light: #ff6a00; /* Яркий оранжевый */
+            --primary-dark: #b22222;  /* Тёмно-красный */
+            --accent: #ff0000;        /* Красный */
+            --dark: #0a0a0a;          /* Почти чёрный */
+            --light: #f5f5f5;         /* Светлый для текста */
+            --black: #000000;          /* Чисто чёрный */
+            --gray: #1a1a1a;           /* Антрацит */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 69, 0, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(255, 0, 0, 0.15) 0%, transparent 50%),
+                        repeating-linear-gradient(45deg, rgba(0,0,0,0.5) 0px, rgba(0,0,0,0.5) 2px, transparent 2px, transparent 4px);
+            z-index: -1;
+            animation: pulse 15s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            padding: 20px 0;
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(180deg, var(--black) 0%, rgba(0,0,0,0.8) 100%);
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+            position: relative;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(255,69,0,0.5);
+        }
+        
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary-dark));
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-link {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 600;
+            position: relative;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-light);
+        }
+        
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .hero {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%),
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 0 L100 100 M100 0 L0 100" stroke="%23ff4500" stroke-width="0.3" opacity="0.2"/></svg>');
+            background-size: cover, auto;
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .hero-content {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 72px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            background: linear-gradient(45deg, #ff4500, #ff0000, #8b0000);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 30px rgba(255,69,0,0.5);
+            animation: flicker 3s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { text-shadow: 0 0 30px rgba(255,69,0,0.5); }
+            50% { text-shadow: 0 0 50px rgba(255,0,0,0.8), 0 0 20px #ff4500; }
+            100% { text-shadow: 0 0 30px rgba(255,69,0,0.5); }
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            color: #cccccc;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        
+        .hero-highlight {
+            color: var(--primary);
+            font-weight: 700;
+            background: rgba(255,69,0,0.2);
+            padding: 5px 10px;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary), var(--primary-light));
+            color: white;
+            text-decoration: none;
+            border-radius: 0px;
+            font-weight: 700;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 14px;
+            border: 1px solid var(--primary-light);
+            box-shadow: 0 0 20px rgba(255,69,0,0.3);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff0000, #ff4500);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255,0,0,0.5);
+            border-color: var(--accent);
+        }
+        
+        .btn:hover::before {
+            opacity: 1;
+        }
+        
+        .features {
+            padding: 80px 0;
+            position: relative;
+            background: var(--black);
+            border-top: 1px solid var(--primary-dark);
+            border-bottom: 1px solid var(--primary-dark);
+        }
+        
+        .section-title {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 60px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--light);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 10%;
+            width: 80%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--accent), var(--primary), transparent);
+            border-radius: 2px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: var(--gray);
+            border-radius: 0px;
+            padding: 35px 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary-dark);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+            text-align: center;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(255,69,0,0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 30px rgba(255,69,0,0.3);
+            border-color: var(--primary);
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .feature-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-light);
+            text-transform: uppercase;
+        }
+        
+        .feature-text {
+            opacity: 0.9;
+            line-height: 1.6;
+            color: #ddd;
+        }
+        
+        footer {
+            padding: 60px 0 30px;
+            background: var(--black);
+            position: relative;
+            border-top: 3px solid var(--primary);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+        
+        .footer-about {
+            max-width: 300px;
+        }
+        
+        .footer-logo {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+        
+        .footer-text {
+            opacity: 0.7;
+            line-height: 1.6;
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .footer-section {
+            min-width: 160px;
+        }
+        
+        .footer-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .footer-link {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s, padding-left 0.3s;
+            font-size: 14px;
+        }
+        
+        .footer-link:hover {
+            color: var(--primary-light);
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-link {
+            width: 44px;
+            height: 44px;
+            border-radius: 0;
+            background: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            border: 1px solid var(--primary-dark);
+            color: var(--primary);
+            font-size: 20px;
+        }
+        
+        .social-link:hover {
+            background: var(--primary);
+            color: var(--black);
+            transform: translateY(-3px);
+            border-color: var(--primary-light);
+            box-shadow: 0 5px 15px rgba(255,69,0,0.4);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--primary-dark);
+            opacity: 0.6;
+            color: #777;
+            font-size: 13px;
+        }
+        
+        /* Анимации */
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 60px;
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                min-height: 70vh;
+                padding: 60px 0;
+                text-align: center;
+            }
+            
+            .hero-content {
+                max-width: 100%;
+            }
+            
+            .hero-title {
+                font-size: 48px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 36px;
+                letter-spacing: 2px;
+            }
+            
+            .section-title {
+                font-size: 32px;
+            }
+            
+            .btn {
+                padding: 12px 30px;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="nav">
+                <a href="#" class="logo">MESTO</a>
+                <div class="nav-links">
+                    <a href="#" class="nav-link">Главная</a>
+                    <a href="#features" class="nav-link">Афиша</a>
+                    <a href="#contact" class="nav-link">Контакты</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">MESTO 32</h1>
+                <p class="hero-subtitle">
+                    <span class="hero-highlight">КАРАЧЕВ SOON...</span><br>
+                    ЕДИНСТВЕННЫЙ НОЧНОЙ КЛУБ В ГОРОДЕ<br>
+                    <strong>ПЯТНИЦА-СУББОТА С 22:00 ДО 05:00</strong>
+                </p>
+                <p style="color: #ff6347; margin-bottom: 30px; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">🔥 ЗАЖИГАЕМ ПО-ЧЁРНОМУ 🔥</p>
+                <a href="#contact" class="btn">ЗАБРОНИРОВАТЬ СТОЛИК</a>
+            </div>
+        </div>
+    </section>
+    
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">ЧТО У НАС ЕСТЬ</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <h3 class="feature-title">ХИТЫ И НОВИНКИ</h3>
+                    <p class="feature-text">Только лучшая музыка: Современные песни и всем известные исполнители. Каждую субботу — тематические сеты от карачевских диджеев.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cocktail"></i>
+                    </div>
+                    <h3 class="feature-title">БАРНАЯ КАРТА</h3>
+                    <p class="feature-text">Авторские коктейли "Огонь Карачева" (текила, перец, лайм), "Чёрный принц" и разливное пиво от местных пивоваров.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3 class="feature-title">АКЦИИ</h3>
+                    <p class="feature-text">Спортикам (если покажите) — вход -50% до 23:00. Именинникам — скидка 20% на бар.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">MESTO</div>
+                    <p class="footer-text">С 2026 года зажигаем огни в самом сердце Карачева. Только 16+.</p>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">КОНТАКТЫ</h3>
+                    <div class="footer-links">
+                        <a href="https://t.me/mesto_kara" class="footer-link" target="_blank">Telegram: @</a>
+                        <a href="#" class="footer-link">+7 (996) 479-76-22</a>
+                        <a href="#" class="footer-link">г. Карачев soon...</a>
+                        <a href="#" class="footer-link">Ежедневно 20:00 - 06:00</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">МЫ В СЕТИ</h3>
+                    <div class="social-links">
+                        <a href="https://t.me/mestoKreall" class="social-link" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+                        <a href="#" class="social-link" target="_blank"><i class="fab fa-vk"></i></a>
+                        <a href="#" class="social-link" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2026 MESTO. Клуб для своих. 16+ | Карачев, Советская 45
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Плавная прокрутка
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Анимация появления карточек
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.feature-card');
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.2;
+                
+                if (elementPosition < screenPosition) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+
+        // Инициализация стилей для анимации
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        });
+
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+        
+        // Эффект мерцания для заголовка (доп)
+        const title = document.querySelector('.hero-title');
+        if (title) {
+            setInterval(() => {
+                title.style.textShadow = '0 0 40px #ff4500, 0 0 20px #ff0000';
+                setTimeout(() => {
+                    title.style.textShadow = '0 0 20px #ff4500';
+                }, 200);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
